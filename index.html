@@ -3,96 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MRL4THEW | Pro Shhhh-O-Meter</title>
+    <title>MRL4THEW | Classroom Shhhh-O-Meter</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { background-color: #050505; }
         .lcd-text { font-family: 'Courier New', Courier, monospace; }
-        .vertical { writing-mode: bt-lr; -webkit-appearance: slider-vertical; width: 12px; height: 180px; }
-        .cooldown-active { animation: pulse-red 1s infinite; }
+        .vertical { writing-mode: bt-lr; -webkit-appearance: slider-vertical; width: 14px; height: 180px; }
+        .cooldown-active { animation: pulse-red 1.5s infinite; }
         @keyframes pulse-red {
-            0% { border-color: #ef4444; }
-            50% { border-color: #7f1d1d; }
-            100% { border-color: #ef4444; }
+            0% { border-color: #ef4444; box-shadow: 0 0 15px #ef4444; }
+            50% { border-color: #450a0a; box-shadow: 0 0 0px #000; }
+            100% { border-color: #ef4444; box-shadow: 0 0 15px #ef4444; }
         }
+        canvas { border-radius: 1.25rem; }
     </style>
 </head>
 <body class="text-emerald-500 flex flex-col items-center justify-center min-h-screen p-4 overflow-hidden">
 
-    <div id="main-frame" class="w-full max-w-5xl bg-zinc-900 border-b-8 border-zinc-950 rounded-3xl p-6 shadow-2xl border-x border-t border-zinc-800 transition-colors duration-500">
+    <div id="main-frame" class="w-full max-w-5xl bg-zinc-900 border-b-8 border-zinc-950 rounded-[2.5rem] p-8 shadow-2xl border-x border-t border-zinc-800 transition-all duration-500">
         
-        <div class="flex justify-between items-end mb-6 bg-black p-5 rounded-2xl border border-zinc-800 shadow-inner">
+        <div class="flex justify-between items-end mb-8 bg-black p-6 rounded-3xl border border-zinc-800 shadow-inner">
             <div>
-                <h1 class="text-3xl font-black tracking-tighter text-white uppercase italic leading-none">MRL4THEW</h1>
-                <p class="text-emerald-500 font-bold text-xs mt-1 uppercase tracking-widest">The "Be Quiet Game"</p>
+                <h1 class="text-4xl font-black tracking-tighter text-white uppercase italic leading-none">MRL4THEW</h1>
+                <p class="text-emerald-500 font-bold text-sm mt-1 uppercase tracking-[0.2em] italic">Let's play the "Be Quiet Game"</p>
             </div>
             <div class="text-right">
-                <p id="cooldown-status" class="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">System Monitor</p>
-                <h2 class="text-2xl font-black text-emerald-500 lcd-text uppercase">Shhhh-o-meter</h2>
+                <p id="cooldown-status" class="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Acoustic Monitor</p>
+                <h2 class="text-3xl font-black text-emerald-500 lcd-text uppercase">Shhhh-o-meter</h2>
             </div>
         </div>
 
-        <div class="grid grid-cols-12 gap-6 h-[400px]">
+        <div class="grid grid-cols-12 gap-8 h-[420px]">
             
-            <div class="col-span-2 grid grid-cols-2 gap-2 bg-black rounded-2xl border border-zinc-800 p-4">
+            <div class="col-span-2 grid grid-cols-2 gap-4 bg-black rounded-3xl border border-zinc-800 p-5 shadow-inner">
                 <div class="flex flex-col items-center">
-                    <span class="text-[9px] mb-2 uppercase font-bold text-zinc-500">Gain</span>
-                    <input type="range" id="gain" min="0.1" max="4.0" step="0.1" value="1.0" class="vertical accent-emerald-500">
+                    <span class="text-[10px] mb-3 uppercase font-bold text-zinc-500">Gain</span>
+                    <input type="range" id="gain" min="0.1" max="5.0" step="0.1" value="1.5" class="vertical accent-emerald-500">
                 </div>
                 <div class="flex flex-col items-center">
-                    <span class="text-[9px] mb-2 uppercase font-bold text-zinc-500">Sponge</span>
-                    <input type="range" id="spongeSpeed" min="0.1" max="2.0" step="0.1" value="1.0" class="vertical accent-blue-500">
+                    <span class="text-[10px] mb-3 uppercase font-bold text-zinc-500">Sponge</span>
+                    <input type="range" id="spongeSpeed" min="0.1" max="2.5" step="0.1" value="1.0" class="vertical accent-blue-500">
                 </div>
             </div>
 
-            <div class="col-span-7 bg-black rounded-2xl border border-zinc-800 relative p-4 overflow-hidden">
+            <div class="col-span-7 bg-black rounded-3xl border border-zinc-800 relative p-3 overflow-hidden shadow-inner">
                 <canvas id="spectrumCanvas" class="w-full h-full"></canvas>
-                <div id="threshold-line" class="absolute left-0 w-full border-t-2 border-dashed border-red-500 z-20 pointer-events-none" style="top: 50%;"></div>
+                <div id="threshold-line" class="absolute left-0 w-full border-t-4 border-dotted border-red-600/80 z-20 pointer-events-none" style="top: 50%;"></div>
             </div>
 
-            <div class="col-span-3 flex flex-col gap-4">
-                <div class="flex-1 bg-black rounded-2xl border border-zinc-800 p-4 flex flex-col items-center justify-center relative overflow-hidden">
-                    <span class="text-[10px] text-zinc-500 font-bold mb-1 uppercase">Strikes</span>
-                    <div id="tally" class="text-8xl font-black text-white italic z-10">0</div>
+            <div class="col-span-3 flex flex-col gap-6">
+                <div class="flex-1 bg-black rounded-3xl border border-zinc-800 p-4 flex flex-col items-center justify-center relative overflow-hidden shadow-inner">
+                    <span class="text-[11px] text-zinc-500 font-bold mb-1 uppercase tracking-widest">Strikes</span>
+                    <div id="tally" class="text-9xl font-black text-white italic z-10 tabular-nums">0</div>
                 </div>
                 
-                <div class="h-1/3 bg-black rounded-2xl border border-zinc-800 relative overflow-hidden">
-                    <div id="sponge-fill" class="absolute bottom-0 w-full bg-emerald-600 transition-all" style="height: 0%; transition-duration: 50ms;"></div>
-                    <div class="absolute inset-0 flex items-center justify-center text-[10px] font-black text-white mix-blend-difference uppercase">Saturation</div>
+                <div class="h-1/3 bg-black rounded-3xl border border-zinc-800 relative overflow-hidden shadow-inner">
+                    <div id="sponge-fill" class="absolute bottom-0 w-full bg-emerald-600 transition-all" style="height: 0%; transition-duration: 80ms;"></div>
+                    <div class="absolute inset-0 flex items-center justify-center text-[11px] font-black text-white mix-blend-difference uppercase tracking-widest">Saturate</div>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-4 gap-4 mt-6">
-            <button id="snapBtn" class="bg-white hover:bg-zinc-200 text-black font-black rounded-xl uppercase text-sm transition-all active:scale-95">Snapshot</button>
+        <div class="grid grid-cols-4 gap-6 mt-8">
+            <button id="snapBtn" class="bg-white hover:bg-zinc-200 text-black font-black rounded-2xl uppercase text-sm transition-all active:scale-95 shadow-xl py-4">Snapshot Calibration</button>
 
-            <div class="bg-black p-4 rounded-xl border border-zinc-800 flex flex-col justify-center">
-                <div class="flex justify-between text-[10px] font-bold mb-1 uppercase">
-                    <span>Threshold: <span id="threshold-val" class="text-emerald-500">50%</span></span>
+            <div class="bg-black p-4 rounded-2xl border border-zinc-800 flex flex-col justify-center shadow-inner">
+                <div class="flex justify-between text-[11px] font-bold mb-1 uppercase tracking-tighter">
+                    <span>Limit: <span id="threshold-val" class="text-emerald-500">50</span></span>
                 </div>
-                <input type="range" id="threshold" min="5" max="95" value="50" class="w-full accent-emerald-500">
+                <input type="range" id="threshold" min="5" max="95" value="50" class="w-full accent-emerald-500 cursor-pointer">
             </div>
             
-            <button id="startBtn" class="bg-emerald-600 hover:bg-emerald-500 text-black font-black rounded-xl uppercase transition-all active:scale-95">Start Game</button>
-            <button id="resetBtn" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-400 font-bold rounded-xl uppercase text-xs">Reset All</button>
+            <button id="startBtn" class="bg-emerald-600 hover:bg-emerald-500 text-black font-black rounded-2xl uppercase transition-all active:scale-95 shadow-[0_10px_20px_rgba(16,185,129,0.2)]">Initialize Game</button>
+            <button id="resetBtn" class="bg-zinc-800 hover:bg-zinc-700 text-zinc-400 font-bold rounded-2xl uppercase text-xs tracking-widest">Reset Suite</button>
         </div>
     </div>
 
     <script>
         let audioCtx, analyser, dataArray, canvas, canvasCtx;
-        let sponge = 0, tallyCount = 0, currentVolPct = 0;
-        let cooldownActive = false;
+        let sponge = 0, tallyCount = 0, currentVolPct = 0, cooldownActive = false;
 
-        const startBtn = document.getElementById('startBtn');
-        const snapBtn = document.getElementById('snapBtn');
-        const spongeFill = document.getElementById('sponge-fill');
-        const tallyDisplay = document.getElementById('tally');
-        const frame = document.getElementById('main-frame');
-        const cooldownStatus = document.getElementById('cooldown-status');
-        const gainIn = document.getElementById('gain');
-        const spongeIn = document.getElementById('spongeSpeed');
-        const thresholdIn = document.getElementById('threshold');
-        const thresholdLine = document.getElementById('threshold-line');
+        const startBtn = document.getElementById('startBtn'), snapBtn = document.getElementById('snapBtn');
+        const spongeFill = document.getElementById('sponge-fill'), tallyDisplay = document.getElementById('tally');
+        const frame = document.getElementById('main-frame'), cooldownStatus = document.getElementById('cooldown-status');
+        const gainIn = document.getElementById('gain'), spongeIn = document.getElementById('spongeSpeed');
+        const thresholdIn = document.getElementById('threshold'), thresholdLine = document.getElementById('threshold-line');
 
         canvas = document.getElementById('spectrumCanvas');
         canvasCtx = canvas.getContext('2d');
@@ -100,18 +95,23 @@
         window.onresize = resize; resize();
 
         async function init() {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            const source = audioCtx.createMediaStreamSource(stream);
-            analyser = audioCtx.createAnalyser(); analyser.fftSize = 64;
-            source.connect(analyser);
-            dataArray = new Uint8Array(analyser.frequencyBinCount);
-            startBtn.innerText = "GAME LIVE"; startBtn.disabled = true;
-            draw();
+            try {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const source = audioCtx.createMediaStreamSource(stream);
+                analyser = audioCtx.createAnalyser(); 
+                analyser.fftSize = 64;
+                analyser.smoothingTimeConstant = 0.85; // Heavier smoothing for classroom acoustics
+                source.connect(analyser);
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+                startBtn.innerText = "GAME LIVE"; startBtn.disabled = true;
+                draw();
+            } catch(e) { alert("Mic required for Shhhh-o-meter!"); }
         }
 
         function draw() {
             requestAnimationFrame(draw);
+            if(!analyser) return;
             analyser.getByteFrequencyData(dataArray);
             
             const gain = parseFloat(gainIn.value);
@@ -119,62 +119,51 @@
             const spongeFactor = parseFloat(spongeIn.value);
             
             thresholdLine.style.top = (100 - threshold) + '%';
-            document.getElementById('threshold-val').innerText = threshold + '%';
+            document.getElementById('threshold-val').innerText = threshold;
 
-            canvasCtx.fillStyle = 'black'; canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+            canvasCtx.fillStyle = '#000'; canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
             let barWidth = (canvas.width / dataArray.length);
-            let totalVolume = 0;
+            let speechVolume = 0;
+            
             for (let i = 0; i < dataArray.length; i++) {
-                let barHeight = dataArray[i] * gain;
-                totalVolume += barHeight;
-                canvasCtx.fillStyle = `hsl(${140 + i*3}, 80%, 50%)`;
-                canvasCtx.fillRect(i * barWidth, canvas.height - barHeight, barWidth - 1, barHeight);
+                // Focus more on human speech frequencies (skipping very low hums)
+                let val = (i < 3) ? dataArray[i] * 0.5 : dataArray[i];
+                let barHeight = val * gain;
+                speechVolume += barHeight;
+                canvasCtx.fillStyle = `hsl(${140 + (i*4)}, 80%, 50%)`;
+                canvasCtx.fillRect(i * barWidth, canvas.height - barHeight, barWidth - 2, barHeight);
             }
 
-            currentVolPct = Math.min((totalVolume / dataArray.length / 255) * 200, 100);
+            currentVolPct = Math.min((speechVolume / dataArray.length / 255) * 220, 100);
 
-            // LINEAR SPONGE LOGIC
             if (!cooldownActive) {
                 if (currentVolPct > threshold) {
-                    // Increase speed is scaled by the "Sponge" slider
-                    sponge += (currentVolPct - threshold) * (spongeFactor * 0.1);
+                    sponge += (currentVolPct - threshold) * (spongeFactor * 0.15);
                 } else {
-                    // LINEAR DECAY: Drops by a steady amount per frame
-                    // The higher the "Sponge" slider, the slower it falls (more absorbent)
-                    let decayRate = 0.5 / spongeFactor; 
-                    sponge -= decayRate;
+                    sponge -= (0.4 / spongeFactor); // Linear decay
                 }
             }
 
             sponge = Math.max(0, Math.min(100, sponge));
             spongeFill.style.height = sponge + '%';
 
-            // STRIKE & COOLDOWN
-            if (sponge >= 100 && !cooldownActive) {
-                triggerStrike();
-            }
-        }
+            if (sponge > 80 && !cooldownActive) spongeFill.style.backgroundColor = '#facc15';
+            else if (!cooldownActive) spongeFill.style.backgroundColor = '#10b981';
 
-        function triggerStrike() {
-            tallyCount++;
-            tallyDisplay.innerText = tallyCount;
-            cooldownActive = true;
-            
-            // Visual Cooldown State
-            frame.classList.add('cooldown-active', 'bg-red-950');
-            cooldownStatus.innerText = "COOLDOWN - PLEASE BE QUIET";
-            cooldownStatus.classList.add('text-red-500');
-            
-            // 5 Second Cooldown
-            setTimeout(() => {
-                cooldownActive = false;
-                sponge = 0; // Reset sponge after cooldown
-                frame.classList.remove('cooldown-active', 'bg-red-950');
-                cooldownStatus.innerText = "SYSTEM MONITOR";
-                cooldownStatus.classList.remove('text-red-500');
-            }, 5000);
-            
-            if (navigator.vibrate) navigator.vibrate(500);
+            if (sponge >= 100 && !cooldownActive) {
+                tallyCount++;
+                tallyDisplay.innerText = tallyCount;
+                cooldownActive = true;
+                spongeFill.style.backgroundColor = '#ef4444';
+                frame.classList.add('cooldown-active', 'bg-red-950');
+                cooldownStatus.innerText = "SHHH! RESETTING...";
+                setTimeout(() => {
+                    cooldownActive = false;
+                    sponge = 0;
+                    frame.classList.remove('cooldown-active', 'bg-red-950');
+                    cooldownStatus.innerText = "ACOUSTIC MONITOR";
+                }, 5000);
+            }
         }
 
         snapBtn.onclick = () => { if(analyser) thresholdIn.value = Math.round(currentVolPct); };
