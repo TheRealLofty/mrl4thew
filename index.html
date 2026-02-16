@@ -1,100 +1,152 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Classroom Monitor</title>
+    <title>TheRealLofty | Classroom Audio Suite</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .meter-transition { transition: height 0.05s linear; }
         .sponge-transition { transition: height 0.2s ease-out; }
-        input[type=range] { writing-mode: bt-lr; -webkit-appearance: slider-vertical; width: 8px; height: 150px; }
+        /* Vertical Slider Styling */
+        .vertical-range {
+            writing-mode: bt-lr; /* IE */
+            -webkit-appearance: slider-vertical; /* Webkit */
+            width: 12px;
+            height: 200px;
+            padding: 0 5px;
+        }
     </style>
 </head>
 <body class="bg-black text-zinc-300 flex flex-col items-center justify-center min-h-screen p-4 font-mono">
 
-    <div class="bg-zinc-900 p-6 rounded-xl border border-zinc-800 w-full max-w-2xl shadow-2xl">
-        <div class="flex justify-between items-center mb-6 border-b border-zinc-800 pb-4">
-            <h1 class="text-xl font-bold tracking-tighter text-zinc-100">AUDIO INPUT MONITOR <span class="text-blue-500">v1.0</span></h1>
-            <div id="status-led" class="w-3 h-3 rounded-full bg-red-900 border border-red-500"></div>
+    <div class="bg-zinc-900 p-8 rounded-2xl border-2 border-zinc-800 w-full max-w-3xl shadow-2xl">
+        
+        <div class="flex justify-between items-center mb-8 border-b border-zinc-800 pb-6">
+            <div>
+                <h1 class="text-2xl font-black tracking-tighter text-zinc-100 uppercase">MRL4THEWIN <span class="text-blue-500">Audio Suite</span></h1>
+                <p class="text-[10px] text-zinc-500">STATION: NORTH NOWRA PRIMARY</p>
+            </div>
+            <div id="status-led" class="flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-950 border border-zinc-800">
+                <div id="led-bulb" class="w-2 h-2 rounded-full bg-red-600"></div>
+                <span id="status-text" class="text-[10px] font-bold">STANDBY</span>
+            </div>
         </div>
 
-        <div class="grid grid-cols-12 gap-6">
+        <div class="grid grid-cols-12 gap-8">
             
-            <div class="col-span-2 flex flex-col items-center justify-between bg-zinc-950 p-3 rounded-lg border border-zinc-800">
-                <span class="text-[10px] mb-2">INPUT GAIN</span>
-                <input type="range" id="gainKnob" min="0" max="2" step="0.1" value="0.5" class="accent-blue-500">
-                <span id="gainLabel" class="text-[10px] mt-2 text-blue-500">0.5x</span>
+            <div class="col-span-2 flex flex-col items-center justify-between bg-zinc-950 p-4 rounded-xl border border-zinc-800">
+                <span class="text-[9px] font-bold text-zinc-500">GAIN</span>
+                <input type="range" id="gainKnob" min="0.1" max="2.0" step="0.1" value="0.5" class="vertical-range accent-blue-500">
+                <span id="gainLabel" class="text-[11px] font-bold text-blue-500">0.5x</span>
             </div>
 
-            <div class="col-span-2 flex flex-col items-center bg-zinc-950 p-3 rounded-lg border border-zinc-800">
-                <span class="text-[10px] mb-2">PEAK</span>
-                <div class="relative w-full h-full bg-zinc-900 rounded border border-zinc-800 overflow-hidden">
-                    <div id="peakMeter" class="absolute bottom-0 w-full bg-gradient-to-t from-green-500 via-yellow-500 to-red-500 meter-transition" style="height: 0%"></div>
+            <div class="col-span-2 flex flex-col items-center bg-zinc-950 p-4 rounded-xl border border-zinc-800">
+                <span class="text-[9px] font-bold text-zinc-500">PEAK</span>
+                <div class="relative w-full h-full bg-zinc-900 rounded-md border border-zinc-800 overflow-hidden mt-2">
+                    <div id="peakMeter" class="absolute bottom-0 w-full bg-gradient-to-t from-green-500 via-yellow-400 to-red-600 meter-transition" style="height: 0%"></div>
                 </div>
             </div>
 
-            <div class="col-span-8 flex flex-col bg-zinc-950 p-4 rounded-lg border border-zinc-800 relative">
-                <span class="text-[10px] mb-4 text-center">CLASSROOM SATURATION (THE SPONGE)</span>
+            <div class="col-span-8 flex flex-col bg-zinc-950 p-6 rounded-xl border border-zinc-800 relative">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-[10px] font-bold">NOISE SATURATION</span>
+                    <span class="text-[10px] text-zinc-500">STRIKE LIMIT: 100%</span>
+                </div>
                 
-                <div class="flex flex-1 gap-4">
-                    <div class="relative flex-1 bg-zinc-900 rounded-lg overflow-hidden border border-zinc-800">
-                        <div id="spongeMeter" class="absolute bottom-0 w-full bg-blue-600 sponge-transition shadow-[0_0_20px_rgba(37,99,235,0.5)]" style="height: 0%"></div>
-                        <div id="thresholdMarker" class="absolute w-full border-t-2 border-dashed border-white/30 z-10" style="bottom: 70%"></div>
+                <div class="flex flex-1 gap-6">
+                    <div class="relative flex-1 bg-zinc-900 rounded-xl overflow-hidden border-2 border-zinc-800">
+                        <div id="thresholdMarker" class="absolute w-full border-t-2 border-dashed border-white/40 z-20 pointer-events-none" style="bottom: 70%"></div>
+                        <div id="spongeMeter" class="absolute bottom-0 w-full bg-blue-600 sponge-transition" style="height: 0%"></div>
                     </div>
 
-                    <div class="flex flex-col justify-center items-center w-32 bg-zinc-900 rounded-lg border border-zinc-800">
-                        <span class="text-[10px] text-zinc-500">STRIKES</span>
-                        <div id="tallyCount" class="text-6xl font-black text-white">0</div>
+                    <div class="flex flex-col justify-center items-center w-40 bg-zinc-900 rounded-xl border-2 border-zinc-800">
+                        <span class="text-[10px] text-zinc-500 font-bold uppercase mb-2">Strikes</span>
+                        <div id="tallyCount" class="text-8xl font-black text-white leading-none">0</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mt-6">
-            <div class="bg-zinc-950 p-3 rounded border border-zinc-800">
-                <span class="text-[10px] block mb-2 uppercase">Trigger Threshold</span>
-                <input type="range" id="threshold" min="0" max="100" value="70" class="w-full !h-2 !appearance-none bg-zinc-800 rounded accent-blue-500">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+            <div class="bg-zinc-950 p-4 rounded-xl border border-zinc-800">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-[10px] font-bold text-zinc-400 uppercase">Trigger Threshold</span>
+                    <span id="thresholdVal" class="text-xs text-blue-400 font-bold">70%</span>
+                </div>
+                <input type="range" id="threshold" min="5" max="95" value="70" class="w-full h-2 bg-zinc-800 rounded-lg appearance-none cursor-pointer accent-blue-500">
             </div>
-            <div class="flex gap-2">
-                <button id="startBtn" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded text-xs">ACTIVATE</button>
-                <button id="resetBtn" class="px-4 border border-zinc-700 hover:bg-zinc-800 text-xs rounded">RESET</button>
+            
+            <div class="flex gap-3">
+                <button id="startBtn" class="flex-[2] bg-blue-600 hover:bg-blue-500 text-white font-black rounded-xl transition-all active:scale-95 text-sm uppercase tracking-wider">
+                    Activate Monitor
+                </button>
+                <button id="resetBtn" class="flex-1 border border-zinc-700 hover:bg-zinc-800 text-zinc-400 font-bold rounded-xl text-xs uppercase transition-colors">
+                    Reset
+                </button>
             </div>
         </div>
+
     </div>
+
+    <p class="mt-6 text-[10px] text-zinc-600 text-center max-w-sm">
+        Sponge Logic: Brief spikes are ignored. Only sustained noise above the threshold fills the meter and triggers a strike.
+    </p>
 
     <script>
         let audioContext, analyser, microphone, dataArray;
         let tally = 0, sponge = 0, tripped = false;
 
+        // Elements
         const peakMeter = document.getElementById('peakMeter');
         const spongeMeter = document.getElementById('spongeMeter');
         const gainKnob = document.getElementById('gainKnob');
         const gainLabel = document.getElementById('gainLabel');
-        const threshold = document.getElementById('threshold');
+        const thresholdSlider = document.getElementById('threshold');
         const thresholdMarker = document.getElementById('thresholdMarker');
+        const thresholdVal = document.getElementById('thresholdVal');
         const tallyCount = document.getElementById('tallyCount');
         const startBtn = document.getElementById('startBtn');
-        const statusLed = document.getElementById('status-led');
+        const statusLed = document.getElementById('led-bulb');
+        const statusText = document.getElementById('status-text');
 
+        // Initial UI Setups
+        thresholdMarker.style.bottom = thresholdSlider.value + '%';
+        thresholdVal.innerText = thresholdSlider.value + '%';
+
+        // Listeners
         gainKnob.oninput = () => gainLabel.innerText = gainKnob.value + 'x';
-        threshold.oninput = () => thresholdMarker.style.bottom = threshold.value + '%';
+        thresholdSlider.oninput = () => {
+            thresholdMarker.style.bottom = thresholdSlider.value + '%';
+            thresholdVal.innerText = thresholdSlider.value + '%';
+        };
 
         async function initAudio() {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            analyser = audioContext.createAnalyser();
-            analyser.fftSize = 256;
-            analyser.smoothingTimeConstant = 0.4; // Responsive peak meter
-            
-            microphone = audioContext.createMediaStreamSource(stream);
-            microphone.connect(analyser);
-            dataArray = new Uint8Array(analyser.frequencyBinCount);
-            
-            startBtn.style.display = 'none';
-            statusLed.classList.replace('bg-red-900', 'bg-green-500');
-            statusLed.classList.add('shadow-[0_0_10px_#22c55e]');
-            render();
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                analyser.smoothingTimeConstant = 0.4; 
+                
+                microphone = audioContext.createMediaStreamSource(stream);
+                microphone.connect(analyser);
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+                
+                startBtn.classList.replace('bg-blue-600', 'bg-zinc-800');
+                startBtn.innerText = "MONITORING LIVE";
+                startBtn.disabled = true;
+                
+                statusLed.classList.replace('bg-red-600', 'bg-green-500');
+                statusText.innerText = "ACTIVE";
+                statusText.classList.add('text-green-500');
+                
+                render();
+            } catch (err) {
+                alert("Microphone access denied. Please allow mic access to use the tool.");
+            }
         }
 
         function render() {
@@ -103,33 +155,45 @@
             for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
             let rawAvg = sum / dataArray.length;
 
-            // 1. APPLY GAIN (Sensitivity fix)
-            // Multiply the volume by our gain knob. 0.5 makes it half as sensitive.
+            // 1. GAIN & PEAK METER
             let level = rawAvg * parseFloat(gainKnob.value);
-            let peakPercent = Math.min(level * 2, 100);
+            let peakPercent = Math.min(level * 2.2, 100);
             peakMeter.style.height = peakPercent + '%';
 
-            // 2. SPONGE LOGIC
-            const limit = parseInt(threshold.value);
-            if (peakPercent > limit) {
-                // Fills up based on how much you are over the limit
-                sponge += (peakPercent - limit) * 0.05;
+            // 2. DYNAMIC THRESHOLD & SPONGE
+            const currentLimit = parseInt(thresholdSlider.value);
+
+            if (peakPercent > currentLimit) {
+                // Higher volume = faster fill
+                let fillIntensity = (peakPercent - currentLimit) * 0.08;
+                sponge += fillIntensity;
             } else {
-                sponge -= 0.5; // Slowly drains
+                // Natural drain
+                sponge -= 0.5; 
             }
 
             sponge = Math.max(0, Math.min(100, sponge));
             spongeMeter.style.height = sponge + '%';
 
-            // Tally
+            // 3. TALLY / STRIKE LOGIC
             if (sponge >= 100 && !tripped) {
                 tally++;
                 tallyCount.innerText = tally;
                 tripped = true;
-                spongeMeter.style.backgroundColor = '#ef4444';
-            } else if (sponge < 50) {
+                spongeMeter.style.backgroundColor = '#ef4444'; // Strike Red
+                if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+            } else if (sponge < 35) { // Reset threshold (must get quiet)
                 tripped = false;
-                spongeMeter.style.backgroundColor = '#2563eb';
+                spongeMeter.style.backgroundColor = '#2563eb'; // Reset Blue
+            }
+
+            // Warning colors for sponge saturation
+            if (!tripped) {
+                if (sponge > 75) {
+                    spongeMeter.style.backgroundColor = '#fbbf24'; // Warning Yellow
+                } else {
+                    spongeMeter.style.backgroundColor = '#2563eb'; // Safe Blue
+                }
             }
 
             requestAnimationFrame(render);
@@ -137,7 +201,11 @@
 
         startBtn.onclick = initAudio;
         document.getElementById('resetBtn').onclick = () => {
-            tally = 0; sponge = 0; tallyCount.innerText = '0';
+            tally = 0; 
+            sponge = 0; 
+            tallyCount.innerText = '0';
+            tripped = false;
+            spongeMeter.style.backgroundColor = '#2563eb';
         };
     </script>
 </body>
