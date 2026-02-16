@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sponge Noise Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .meter-fill { transition: height 0.1s linear; }
+        .saturated { animation: shake 0.2s infinite; }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(2px); }
+            50% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+            100% { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body class="bg-zinc-900 text-white flex flex-col items-center justify-center min-h-screen p-6">
+
+    <div class="bg-zinc-800 p-8 rounded-[2.5rem] border-8 border-zinc-700 w-full max-w-md text-center shadow-2xl">
+        <h1 class="text-2xl font-black mb-1 text-yellow-400">THE NOISE SPONGE</h1>
+        <p class="text-zinc-500 text-xs mb-8 uppercase tracking-widest">Sustained Noise Only</p>
+        
+        <div class="relative w-32 h-80 bg-zinc-950 mx-auto rounded-3xl overflow-hidden border-4 border-zinc-700 mb-8 shadow-inner">
+            <div id="meter" class="absolute bottom-0 w-full bg-yellow-400 meter-fill" style="height: 0%"></div>
+            
+            <div class="absolute top-0 w-full h-1 bg-red-500 shadow-[0_0_15px_red]"></div>
+        </div>
+
+        <div class="mb-8">
+            <div id="tally" class="text-8xl font-black text-zinc-100 tabular-nums">0</div>
+            <p class="text-zinc-500 text-sm font-bold">STRIKES</p>
+        </div>
+
+        <div class="space-y-6">
+            <div class="px-4">
+                <input type="range" id="sensitivity" min="10" max="90" value="50" class="w-full h-3 bg-zinc-700 rounded-lg appearance-none cursor-pointer accent-yellow-500">
+                <p class="text-[10px] text-zinc-500 mt-2 uppercase">Mic Sensitivity</p>
+            </div>
+            
+            <button id="startBtn" class="bg-yellow-500 hover:bg-yellow-400 text-zinc-900 font-black py-4 px-8 rounded-2xl w-full transition-all active:scale-95">
+                START MONITOR
+            </button>
+            <button id="resetBtn" class="text-zinc-600 hover:text-white text-xs uppercase tracking-widest">Clear Strikes</button>
+        </div>
+    </div>
+
+    <script>
+        let audioContext, analyser, microphone, dataArray;
+        let tallyCount = 0;
+        let spongeLevel = 0; // 0 to 100
+        let isTripped = false;
+
+        const meter = document.getElementById('meter');
+        const tallyDisplay = document.getElementById('tally');
+        const sensitivity = document.getElementById('sensitivity');
+        const startBtn = document.getElementById('startBtn');
+        const resetBtn = document.getElementById('resetBtn');
+
+        async function startAudio() {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            analyser = audioContext.createAnalyser();
+            microphone = audioContext.createMediaStreamSource(stream);
+            analyser.fftSize = 256;
+            microphone.connect(analyser);
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+            startBtn.style.display = 'none';
+            update();
+        }
+
+        function update() {
+            analyser.getByteFrequencyData(dataArray);
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
+            let average = sum / dataArray.length;
+            
+            // "Volume" is relative to the slider
+            let threshold = (100 - sensitivity.value) * 0.5; 
+            
+            if (average > threshold) {
+                // SPONGE IS SOAKING UP NOISE
+                // Higher average = faster rise
+                let growthRate = (average - threshold) * 0.15;
+                spongeLevel += growthRate;
+            } else {
+                // SPONGE IS DRAINING
+                spongeLevel -= 0.8; 
+            }
+
+            // Keep sponge between 0 and 100
+            spongeLevel = Math.max(0, Math.min(100, spongeLevel));
+            
+            // Visual Update
+            meter.style.height = spongeLevel + '%';
+
+            // Tally Logic
+            if (spongeLevel >= 100) {
+                if (!isTripped) {
+                    tallyCount++;
+                    tallyDisplay.innerText = tallyCount;
+                    isTripped = true;
+                    meter.classList.add('saturated');
+                    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+                }
+            } else if (spongeLevel < 50) {
+                // Must drain halfway before it can trip again
+                isTripped = false;
+                meter.classList.remove('saturated');
+            }
+
+            // Change color based on "fullness"
+            if (spongeLevel > 80) meter.style.backgroundColor = '#ef4444'; // Red
+            else if (spongeLevel > 50) meter.style.backgroundColor = '#facc15'; // Yellow
+            else meter.style.backgroundColor = '#4ade80'; // Green
+
+            requestAnimationFrame(update);
+        }
+
+        startBtn.addEventListener('click', startAudio);
+        resetBtn.addEventListener('click', () => {
+            tallyCount = 0;
+            tallyDisplay.innerText = '0';
+            spongeLevel = 0;
+        });
+    </script>
+</body>
+</html>
