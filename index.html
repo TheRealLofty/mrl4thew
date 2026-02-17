@@ -24,7 +24,6 @@
             width: 100%; height: 4px; cursor: pointer; background: #27272a; border-radius: 2px;
         }
         
-        /* Cooldown Pulse Animation */
         .cooldown-active { animation: pulse-red 1.5s infinite; }
         @keyframes pulse-red {
             0% { border-color: #ef4444; box-shadow: 0 0 20px #ef4444; }
@@ -33,36 +32,50 @@
         }
         canvas { border-radius: 0.75rem; }
 
-        /* SHUSH POPUP ANIMATION */
+        /* POPUP ANIMATION */
         #shush-overlay {
             opacity: 0; pointer-events: none; transform: scale(0.8); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         #shush-overlay.active {
             opacity: 1; transform: scale(1);
         }
-        .shush-finger { animation: shush-motion 1s infinite alternate; }
+        
+        /* HAND ANIMATION */
+        .shush-hand { animation: shush-motion 0.5s infinite alternate ease-in-out; transform-origin: center bottom; }
         @keyframes shush-motion {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-5px); }
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-5px) rotate(-2deg); }
         }
     </style>
 </head>
 <body class="text-emerald-500 h-dvh w-screen overflow-hidden flex flex-col p-2 md:p-6 select-none relative">
 
     <div class="absolute top-0 left-0 p-1 bg-zinc-800 text-[9px] text-zinc-400 font-mono z-50 rounded-br-lg opacity-50">
-        v1.1
+        v1.2
     </div>
 
-    <div id="shush-overlay" class="absolute inset-0 z-40 flex items-center justify-center bg-black/80 backdrop-blur-sm">
+    <div id="shush-overlay" class="absolute inset-0 z-40 flex items-center justify-center bg-black/85 backdrop-blur-sm">
         <div class="flex flex-col items-center">
-            <svg width="200" height="200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.5)]">
-                <circle cx="12" cy="12" r="10" class="text-red-500 stroke-current" />
-                <path d="M8 9h.01" stroke-width="3" />
-                <path d="M16 9h.01" stroke-width="3" />
-                <path d="M12 17V12" stroke-width="2.5" class="shush-finger text-white" />
-                <path d="M10 12h4" stroke-width="1" class="opacity-50" />
+            
+            <svg width="220" height="220" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-2xl">
+                <circle cx="100" cy="100" r="90" fill="#FACC15"/> <circle cx="100" cy="100" r="90" stroke="#EAB308" stroke-width="4"/> <ellipse cx="65" cy="85" rx="12" ry="18" fill="#4B5563"/>
+                <ellipse cx="135" cy="85" rx="12" ry="18" fill="#4B5563"/>
+                
+                <path d="M50 70 Q65 60 80 70" stroke="#78350F" stroke-width="6" stroke-linecap="round"/>
+                <path d="M120 70 Q135 60 150 70" stroke="#78350F" stroke-width="6" stroke-linecap="round"/>
+
+                <circle cx="100" cy="135" r="8" fill="#4B5563" opacity="0.5"/>
+
+                <g class="shush-hand">
+                    <rect x="70" y="130" width="60" height="50" rx="15" fill="#FACC15" stroke="#EAB308" stroke-width="3"/>
+                    
+                    <rect x="88" y="100" width="24" height="60" rx="12" fill="#FACC15" stroke="#EAB308" stroke-width="3"/>
+                    
+                    <path d="M90 130 H110" stroke="#EAB308" stroke-width="2" opacity="0.5"/>
+                </g>
             </svg>
-            <h1 class="text-4xl md:text-6xl font-black text-white mt-4 tracking-tighter uppercase drop-shadow-lg">SHHHHH!</h1>
+
+            <h1 class="text-5xl md:text-7xl font-black text-white mt-6 tracking-tighter uppercase drop-shadow-lg">SHHHHH!</h1>
             <p class="text-red-500 font-bold uppercase tracking-widest mt-2 animate-pulse">Too Loud</p>
         </div>
     </div>
@@ -272,7 +285,7 @@
                 frame.classList.remove('cooldown-active', 'bg-red-950');
                 cooldownStatus.innerText = "ACOUSTIC MONITOR";
                 cooldownStatus.classList.remove('text-red-500');
-            }, 2500); // 2.5 second cooldown/popup duration
+            }, 2500); 
         }
 
         snapBtn.onclick = () => { 
