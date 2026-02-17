@@ -43,39 +43,42 @@
         /* HAND ANIMATION */
         .shush-hand { animation: shush-motion 0.5s infinite alternate ease-in-out; transform-origin: center bottom; }
         @keyframes shush-motion {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(-5px) rotate(-2deg); }
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-3px); }
         }
     </style>
 </head>
 <body class="text-emerald-500 h-dvh w-screen overflow-hidden flex flex-col p-2 md:p-6 select-none relative">
 
     <div class="absolute top-0 left-0 p-1 bg-zinc-800 text-[9px] text-zinc-400 font-mono z-50 rounded-br-lg opacity-50">
-        v1.2
+        v1.3
     </div>
 
-    <div id="shush-overlay" class="absolute inset-0 z-40 flex items-center justify-center bg-black/85 backdrop-blur-sm">
+    <div id="shush-overlay" class="absolute inset-0 z-40 flex items-center justify-center bg-black/90 backdrop-blur-md">
         <div class="flex flex-col items-center">
             
-            <svg width="220" height="220" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-2xl">
-                <circle cx="100" cy="100" r="90" fill="#FACC15"/> <circle cx="100" cy="100" r="90" stroke="#EAB308" stroke-width="4"/> <ellipse cx="65" cy="85" rx="12" ry="18" fill="#4B5563"/>
-                <ellipse cx="135" cy="85" rx="12" ry="18" fill="#4B5563"/>
+            <svg width="240" height="240" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-2xl">
+                <circle cx="100" cy="100" r="90" fill="#FACC15"/> 
+                <circle cx="100" cy="100" r="90" stroke="#EAB308" stroke-width="4"/> 
                 
-                <path d="M50 70 Q65 60 80 70" stroke="#78350F" stroke-width="6" stroke-linecap="round"/>
-                <path d="M120 70 Q135 60 150 70" stroke="#78350F" stroke-width="6" stroke-linecap="round"/>
-
-                <circle cx="100" cy="135" r="8" fill="#4B5563" opacity="0.5"/>
+                <ellipse cx="65" cy="80" rx="10" ry="14" fill="#4B5563"/>
+                <ellipse cx="135" cy="80" rx="10" ry="14" fill="#4B5563"/>
+                
+                <path d="M55 65 Q65 60 75 65" stroke="#92400E" stroke-width="5" stroke-linecap="round"/>
+                <path d="M125 65 Q135 60 145 65" stroke="#92400E" stroke-width="5" stroke-linecap="round"/>
 
                 <g class="shush-hand">
-                    <rect x="70" y="130" width="60" height="50" rx="15" fill="#FACC15" stroke="#EAB308" stroke-width="3"/>
+                    <rect x="75" y="130" width="18" height="40" rx="8" fill="#FACC15" stroke="#CA8A04" stroke-width="3"/>
+                    <rect x="94" y="132" width="18" height="38" rx="8" fill="#FACC15" stroke="#CA8A04" stroke-width="3"/>
+                    <rect x="113" y="135" width="18" height="35" rx="8" fill="#FACC15" stroke="#CA8A04" stroke-width="3"/>
                     
-                    <rect x="88" y="100" width="24" height="60" rx="12" fill="#FACC15" stroke="#EAB308" stroke-width="3"/>
+                    <rect x="85" y="90" width="22" height="70" rx="10" fill="#FACC15" stroke="#CA8A04" stroke-width="3"/>
                     
-                    <path d="M90 130 H110" stroke="#EAB308" stroke-width="2" opacity="0.5"/>
+                    <path d="M80 150 Q100 160 120 145" stroke="#CA8A04" stroke-width="3" fill="#FACC15" stroke-linecap="round"/>
                 </g>
             </svg>
 
-            <h1 class="text-5xl md:text-7xl font-black text-white mt-6 tracking-tighter uppercase drop-shadow-lg">SHHHHH!</h1>
+            <h1 class="text-5xl md:text-7xl font-black text-white mt-4 tracking-tighter uppercase drop-shadow-lg">SHHHHH!</h1>
             <p class="text-red-500 font-bold uppercase tracking-widest mt-2 animate-pulse">Too Loud</p>
         </div>
     </div>
